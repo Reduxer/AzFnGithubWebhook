@@ -31,7 +31,6 @@ namespace FuncOnVS
                 return new UnauthorizedObjectResult(null);
             }
             
-
             return new OkObjectResult(requestBody);
         }
 
@@ -42,7 +41,9 @@ namespace FuncOnVS
             byte[] keyByte = Encoding.UTF8.GetBytes(key);
             byte[] contentBytes = Encoding.UTF8.GetBytes(content);
 
-            byte[] hashmessage = new HMACSHA1(keyByte).ComputeHash(contentBytes);
+            using var hmsha1 = new HMACSHA1(keyByte);
+
+            byte[] hashmessage = hmsha1.ComputeHash(contentBytes);
             var contentHexitsStr = String.Concat(Array.ConvertAll(hashmessage, x => x.ToString("x2")));
 
             var computedSignature = $"sha1={contentHexitsStr}";
